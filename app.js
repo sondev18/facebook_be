@@ -38,13 +38,11 @@ io.on("connection", (socket) => {
   
   // add messages 
   socket.on("sendMessage", (message) => {
-    console.log("meaa", message)
-    const user = onlineUsers.find(user => user?.userId === message.recipientId)
-    console.log(user,onlineUsers)
+    const user = onlineUsers.find(user => user?.userId === message.receiverId)
     if(user){
         io.to(user.socketId).emit("getMessage", message);
         io.to(user.socketId).emit("getNotification", {
-          senderId: message.senderId,
+            recipientId: message.recipientId,
           isRead:false,
           date: new Date()
         })
