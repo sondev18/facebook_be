@@ -7,9 +7,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const {sendResponse} = require("./helpers/utils")
-const { Server } = require("socket.io");
+// const { Server } = require("socket.io");
 
-const io = new Server(5002, { cors: "http://localhost:3001" });
+// const io = new Server(5002, { cors: "http://localhost:3001" });
 
 const indexRouter = require('./routes/index');
 
@@ -20,35 +20,35 @@ app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 
-let onlineUsers = []
+// let onlineUsers = []
 
-io.on("connection", (socket) => {
-    socket.on("addNewUser", (userId)=> {
-        !onlineUsers.some(user => user.userId === userId) && userId !== null &&
-        onlineUsers.push({
-            userId,
-            socketId: socket.id
-        })
-        io.emit("getOnlineUsers", onlineUsers)
-    })
-    // remove user
-  socket.on("removeUser", (userId) => {
-    onlineUsers = onlineUsers.filter(user => user.userId !== userId)
-  })
+// io.on("connection", (socket) => {
+//     socket.on("addNewUser", (userId)=> {
+//         !onlineUsers.some(user => user.userId === userId) && userId !== null &&
+//         onlineUsers.push({
+//             userId,
+//             socketId: socket.id
+//         })
+//         io.emit("getOnlineUsers", onlineUsers)
+//     })
+//     // remove user
+//   socket.on("removeUser", (userId) => {
+//     onlineUsers = onlineUsers.filter(user => user.userId !== userId)
+//   })
   
-  // add messages 
-  socket.on("sendMessage", (message) => {
-    const user = onlineUsers.find(user => user?.userId === message.receiverId)
-    if(user){
-        io.to(user.socketId).emit("getMessage", message);
-        io.to(user.socketId).emit("getNotification", {
-            recipientId: message.recipientId,
-          isRead:false,
-          date: new Date()
-        })
-      }
-  })
-})
+//   // add messages 
+//   socket.on("sendMessage", (message) => {
+//     const user = onlineUsers.find(user => user?.userId === message.receiverId)
+//     if(user){
+//         io.to(user.socketId).emit("getMessage", message);
+//         io.to(user.socketId).emit("getNotification", {
+//             recipientId: message.recipientId,
+//           isRead:false,
+//           date: new Date()
+//         })
+//       }
+//   })
+// })
 
 app.use('/api', indexRouter);
 
